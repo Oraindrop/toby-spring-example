@@ -1,5 +1,6 @@
 package io.github.oraindrop;
 
+import io.github.oraindrop.dao.CustomUserDao;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.User;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,7 @@ public class Application {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         SpringApplication.run(Application.class, args);
 
-        UserDao dao = new UserDao();
+        UserDao dao = new CustomUserDao();
 
         User user = new User();
         user.setId("choising");

@@ -4,7 +4,7 @@ import io.github.oraindrop.domain.User;
 
 import java.sql.*;
 
-public class UserDao {
+public abstract class UserDao {
 
     public void add(User user) throws SQLException, ClassNotFoundException {
         Connection c = getConnection();
@@ -42,8 +42,5 @@ public class UserDao {
         return user;
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:mem:toby-spring", "sa", "");
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 }
