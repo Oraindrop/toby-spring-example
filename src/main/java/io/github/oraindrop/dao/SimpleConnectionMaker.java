@@ -9,5 +9,6 @@ public class SimpleConnectionMaker implements ConnectionMaker {
     @Override
     public Connection makeConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.h2.Driver");
-        return DriverManager.getConnection("jdbc:h2:mem:toby-spring", "sa", "");    }
+        return DriverManager.getConnection("jdbc:h2:mem:toby-spring", "sa", "");
+    }
 }
