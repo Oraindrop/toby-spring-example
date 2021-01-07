@@ -5,6 +5,8 @@ import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.SQLException;
 
@@ -12,9 +14,10 @@ import java.sql.SQLException;
 public class Application {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        SpringApplication.run(Application.class, args);
 
-        UserDao dao = new DaoFactory().userDao();
+        SpringApplication.run(Application.class, args);
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao dao = context.getBean("userDao", UserDao.class);
 
         User user = new User();
         user.setId("choising");
