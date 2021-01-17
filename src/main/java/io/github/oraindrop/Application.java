@@ -33,7 +33,13 @@ public class Application {
         System.out.println(user2.getName());
         System.out.println(user2.getPassword());
 
-        System.out.println(user2.getId() + "find success");
+        if (!user.getName().equals(user2.getName())) {
+            System.out.println("테스트 실패 (name)");
+        } else if (!user.getPassword().equals(user2.getPassword())) {
+            System.out.println("테스트 실패 (password)");
+        } else {
+            System.out.println("테스트 성공");
+        }
 
         CountingConnectionMaker countingConnectionMaker = context.getBean("connectionMaker", CountingConnectionMaker.class);
         System.out.println("Connection count : " + countingConnectionMaker.getCount());
