@@ -1,11 +1,11 @@
 package io.github.oraindrop.dao;
 
+import io.github.oraindrop.Application;
 import io.github.oraindrop.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.SQLException;
@@ -13,9 +13,10 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 public class UserDaoTest {
 
+    @Autowired
     private UserDao dao;
 
     private User user1;
@@ -26,9 +27,6 @@ public class UserDaoTest {
 
     @BeforeEach
     public void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(CountingDaoFactory.class);
-        this.dao = context.getBean("userDao", UserDao.class);
-
         user1 = new User("zingo", "노징고", "1234");
         user2 = new User("choising", "최싱", "12345");
         user3 = new User("forever", "포에버", "123456");
