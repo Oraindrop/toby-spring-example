@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.*;
 
-public abstract class UserDao {
+public class UserDao {
 
     private ConnectionMaker connectionMaker;
 
@@ -60,7 +60,8 @@ public abstract class UserDao {
 
         try {
             c = connectionMaker.makeConnection();
-            ps = this.makeStatement(c);
+            StatementStrategy strategy = new DeleteAllStatement();
+            ps = strategy.makePreparedStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
@@ -82,8 +83,6 @@ public abstract class UserDao {
             }
         }
     }
-
-    abstract protected PreparedStatement makeStatement(Connection c) throws SQLException;
 
     public int getCount() throws SQLException, ClassNotFoundException {
         Connection c = null;
