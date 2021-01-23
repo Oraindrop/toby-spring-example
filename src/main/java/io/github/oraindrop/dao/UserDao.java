@@ -60,7 +60,7 @@ public class UserDao {
 
         try {
             c = connectionMaker.makeConnection();
-            ps = c.prepareStatement("delete from user");
+            ps = this.makeStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
@@ -81,6 +81,12 @@ public class UserDao {
                 }
             }
         }
+    }
+
+    private PreparedStatement makeStatement(Connection c) throws SQLException {
+        PreparedStatement ps;
+        ps = c.prepareStatement("delete from user");
+        return ps;
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
