@@ -55,12 +55,15 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
+        jdbcContextWithStatementStrategy(new DeleteAllStatement());
+    }
+
+    private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws ClassNotFoundException, SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
         try {
             c = connectionMaker.makeConnection();
-            StatementStrategy strategy = new DeleteAllStatement();
             ps = strategy.makePreparedStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
