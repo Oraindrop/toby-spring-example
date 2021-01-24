@@ -74,4 +74,5 @@ public class UserDaoTest {
             dao.get("unkown_id");
         });
     }
+
 }
