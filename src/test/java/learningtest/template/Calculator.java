@@ -7,20 +7,25 @@ import java.io.IOException;
 public class Calculator {
 
     public int calcSum(String filepath) throws IOException {
-        LineCallback sumCallback = (line, value) -> value + Integer.parseInt(line);
+        LineCallback<Integer> sumCallback = (line, value) -> value + Integer.parseInt(line);
         return this.lineReadTemplate(filepath, sumCallback, 0);
     }
 
     public int calcMultiply(String filepath) throws IOException {
-        LineCallback multiplyCallback = (line, value) -> value * Integer.parseInt(line);
+        LineCallback<Integer> multiplyCallback = (line, value) -> value * Integer.parseInt(line);
         return this.lineReadTemplate(filepath, multiplyCallback, 1);
     }
 
-    public int lineReadTemplate(String filepath, LineCallback callback, int initVal) throws IOException {
+    public String concatenate(String filepate) throws IOException {
+        LineCallback<String> concatenateCallback = (line, value) -> value + line;
+        return this.lineReadTemplate(filepate, concatenateCallback, "");
+    }
+
+    public <T> T lineReadTemplate(String filepath, LineCallback<T> callback, T initVal) throws IOException {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filepath));
-            int res = initVal;
+            T res = initVal;
             String line = null;
 
             while ((line = br.readLine()) != null) {

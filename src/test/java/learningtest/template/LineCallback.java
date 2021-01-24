@@ -1,5 +1,5 @@
 package learningtest.template;
 
-public interface LineCallback {
-    int doSomethingWithLine(String line, int value);
+public interface LineCallback<T> {
+    T doSomethingWithLine(String line, T value);
 }
