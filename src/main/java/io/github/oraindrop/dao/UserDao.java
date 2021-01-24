@@ -14,7 +14,16 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException {
-        jdbcContextWithStatementStrategy(new AddStatement(user));
+        jdbcContextWithStatementStrategy(c -> {
+            PreparedStatement ps = c.prepareStatement(
+                    "insert into user (id, name, password) values (?,?,?)");
+
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+
+            return ps;
+        });
     }
 
     public User get(String id) throws SQLException, ClassNotFoundException {
@@ -44,7 +53,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        jdbcContextWithStatementStrategy(new DeleteAllStatement());
+        jdbcContextWithStatementStrategy(c -> c.prepareStatement("delete from user"));
     }
 
     private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws ClassNotFoundException, SQLException {
