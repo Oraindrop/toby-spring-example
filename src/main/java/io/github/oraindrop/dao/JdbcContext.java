@@ -12,6 +12,10 @@ public class JdbcContext {
         this.connectionMaker = connectionMaker;
     }
 
+    public void executeSql(final String query) throws ClassNotFoundException, SQLException {
+        this.workWithStatementStrategy(c -> c.prepareStatement(query));
+    }
+
     public void workWithStatementStrategy(StatementStrategy strategy) throws ClassNotFoundException, SQLException {
         Connection c = null;
         PreparedStatement ps = null;

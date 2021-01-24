@@ -16,7 +16,7 @@ public class UserDao {
         this.jdbcContext = new JdbcContext(this.connectionMaker);
     }
 
-    public void add(User user) throws SQLException, ClassNotFoundException {
+    public void add(final User user) throws SQLException, ClassNotFoundException {
         this.jdbcContext.workWithStatementStrategy(c -> {
             PreparedStatement ps = c.prepareStatement(
                     "insert into user (id, name, password) values (?,?,?)");
@@ -56,7 +56,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        this.jdbcContext.workWithStatementStrategy(c -> c.prepareStatement("delete from user"));
+        jdbcContext.executeSql("delete from user");
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
