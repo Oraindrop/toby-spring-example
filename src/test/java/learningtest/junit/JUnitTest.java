@@ -1,4 +1,4 @@
-package io.github.oraindrop.dao;
+package learningtest.junit;
 
 import org.junit.jupiter.api.Test;
 

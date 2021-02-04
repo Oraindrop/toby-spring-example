@@ -1,45 +1,18 @@
 package io.github.oraindrop.dao;
 
 import io.github.oraindrop.domain.User;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
-import java.sql.*;
+import java.util.List;
 
-public class UserDao {
+public interface UserDao {
 
-    private JdbcTemplate jdbcTemplate;
+    void add(User user);
 
-    public UserDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+    User get(String id);
 
-    public void add(final User user) throws SQLException, ClassNotFoundException {
-        this.jdbcTemplate.update("insert into user (id, name, password) values (?,?,?)",
-                user.getId(), user.getName(), user.getPassword());
-    }
+    List<User> getAll();
 
-    public User get(String id) throws SQLException, ClassNotFoundException {
-        return this.jdbcTemplate.queryForObject("select * from user where id = ?", new Object[]{id},
-                new RowMapper<User>() {
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User();
-                        user.setId(rs.getString("id"));
-                        user.setName(rs.getString("name"));
-                        user.setPassword(rs.getString("password"));
-                        return user;
-                    }
-                });
-    }
+    void deleteAll();
 
-    public void deleteAll() throws SQLException, ClassNotFoundException {
-        this.jdbcTemplate.update("delete from user");
-    }
-
-    public int getCount() throws SQLException, ClassNotFoundException {
-        return this.jdbcTemplate.queryForObject("select count(*) from user", Integer.class);
-    }
+    int getCount();
 }

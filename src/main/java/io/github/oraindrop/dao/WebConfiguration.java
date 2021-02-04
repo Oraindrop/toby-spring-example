@@ -12,23 +12,15 @@ import java.sql.SQLException;
 public class WebConfiguration {
 
     @Bean
-    @ConfigurationProperties("spring.datasource")
-    public DataSource dataSource() throws SQLException {
+    @ConfigurationProperties("spring.datasource.hikari")
+    public DataSource dataSource() {
+
         return new HikariDataSource();
     }
 
     @Bean
     public UserDao userDao() throws SQLException {
-        return new UserDao(this.dataSource());
+        return new UserJdbcDao(this.dataSource());
     }
 
-    @Bean
-    public ConnectionMaker connectionMaker() {
-        return new CountingConnectionMaker(this.realConnectionMaker());
-    }
-
-    @Bean
-    public ConnectionMaker realConnectionMaker() {
-        return new SimpleConnectionMaker();
-    }
 }
