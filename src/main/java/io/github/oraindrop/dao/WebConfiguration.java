@@ -7,6 +7,7 @@ import io.github.oraindrop.service.UserService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -31,7 +32,7 @@ public class WebConfiguration {
 
     @Bean
     public UserService userService() {
-        return new UserService(this.userDao(), this.userLevelUpgradePolicy());
+        return new UserService(this.userDao(), this.userLevelUpgradePolicy(), new DataSourceTransactionManager(this.dataSource()));
     }
 
 

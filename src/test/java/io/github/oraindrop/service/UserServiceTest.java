@@ -4,6 +4,7 @@ import io.github.oraindrop.Application;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,43 @@ class UserServiceTest {
         } else {
             assertEquals(userUpdate.getLevel(), user.getLevel());
         }
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        userService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyTest(userDao, users.get(3).getId()));
+        userDao.deleteAll();
+
+        for (User user : users) {
+            userDao.add(user);
+        }
+        Assertions.assertThrows(TestUserServiceException.class, () -> {
+            userService.upgradeLevels();
+        });
+
+        checkLevel(users.get(1), false);
+    }
+
+    static class UserLevelUpgradePolicyTest extends UserLevelUpgradePolicyDefault {
+
+        private String id;
+
+        public UserLevelUpgradePolicyTest(UserDao userDao, String id) {
+            super(userDao);
+            this.id = id;
+        }
+
+        @Override
+        public void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) {
+                throw new TestUserServiceException();
+            }
+
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
 
     }
 }
