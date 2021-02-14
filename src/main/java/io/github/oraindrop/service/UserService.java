@@ -3,12 +3,10 @@ package io.github.oraindrop.service;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 public class UserService {

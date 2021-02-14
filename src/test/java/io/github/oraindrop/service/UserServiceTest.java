@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,11 +32,11 @@ class UserServiceTest {
     @BeforeEach
     public void setUp() {
         users = Arrays.asList(
-                new User("id1", "name1", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
-                new User("id2", "name2", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 10),
-                new User("id3", "name3", "p3", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD - 1),
-                new User("id4", "name4", "p4", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD),
-                new User("id5", "name5", "p5", Level.GOLD, 100 ,100)
+                new User("id1", "name1", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0, "email1"),
+                new User("id2", "name2", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 10, "email2"),
+                new User("id3", "name3", "p3", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD - 1, "email3"),
+                new User("id4", "name4", "p4", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD, "email4"),
+                new User("id5", "name5", "p5", Level.GOLD, 100 ,100, "email5")
         );
     }
 
@@ -85,6 +86,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() {
         userService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyTest(userDao, users.get(3).getId()));
         userDao.deleteAll();

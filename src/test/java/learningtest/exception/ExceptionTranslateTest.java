@@ -34,9 +34,9 @@ public class ExceptionTranslateTest {
 
     @BeforeEach
     public void setUp() {
-        user1 = new User("zingo", "노징고", "1234", Level.BASIC, 1, 0);
-        user2 = new User("choising", "최싱", "12345", Level.SILVER, 55, 10);
-        user3 = new User("forever", "포에버", "123456", Level.GOLD, 100 ,40);
+        user1 = new User("zingo", "노징고", "1234", Level.BASIC, 1, 0, "email1");
+        user2 = new User("choising", "최싱", "12345", Level.SILVER, 55, 10, "email2");
+        user3 = new User("forever", "포에버", "123456", Level.GOLD, 100 ,40, "email3");
     }
 
     @Test

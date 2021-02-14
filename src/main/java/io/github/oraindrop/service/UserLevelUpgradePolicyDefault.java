@@ -30,5 +30,10 @@ public class UserLevelUpgradePolicyDefault implements UserLevelUpgradePolicy {
     public void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeMail(user);
+    }
+
+    private void sendUpgradeMail(User user) {
+        // dummy
     }
 }
