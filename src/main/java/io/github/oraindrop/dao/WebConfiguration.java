@@ -1,12 +1,12 @@
 package io.github.oraindrop.dao;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.oraindrop.service.UserService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 @Configuration
 public class WebConfiguration {
@@ -18,8 +18,13 @@ public class WebConfiguration {
     }
 
     @Bean
-    public UserDao userDao() throws SQLException {
+    public UserDao userDao() {
         return new UserJdbcDao(this.dataSource());
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(this.userDao());
     }
 
 }

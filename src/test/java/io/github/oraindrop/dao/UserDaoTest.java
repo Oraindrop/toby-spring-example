@@ -94,4 +94,25 @@ public class UserDaoTest {
         });
     }
 
+    @Test
+    public void update() {
+        dao.deleteAll();
+
+        dao.add(user1);
+        dao.add(user2);
+
+        user1.setName("노진산");
+        user1.setPassword("5678");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+
+        dao.update(user1);
+
+        User updateUser1 = dao.get(user1.getId());
+        checkSameUser(user1, updateUser1);
+
+        User userSame2 = dao.get(user2.getId());
+        checkSameUser(user2, userSame2);
+    }
 }

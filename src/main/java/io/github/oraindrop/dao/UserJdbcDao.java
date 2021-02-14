@@ -44,12 +44,21 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public List<User> getAll() {
-        return null;
+        return this.jdbcTemplate.query("select * from user", this.userMapper);
     }
 
     @Override
     public void deleteAll() {
         this.jdbcTemplate.update("delete from user");
+    }
+
+    @Override
+    public void update(User user) {
+        this.jdbcTemplate.update(
+                "update user " +
+                        "set name = ?, password = ?, level = ?, login = ?, recommend = ?" +
+                        "where id = ?",
+                user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
     }
 
     @Override
