@@ -1,6 +1,7 @@
 package io.github.oraindrop.dao;
 
 import io.github.oraindrop.Application;
+import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,9 +29,18 @@ public class UserDaoTest {
 
     @BeforeEach
     public void setUp() {
-        user1 = new User("zingo", "노징고", "1234");
-        user2 = new User("choising", "최싱", "12345");
-        user3 = new User("forever", "포에버", "123456");
+        user1 = new User("zingo", "노징고", "1234", Level.BASIC, 1, 0);
+        user2 = new User("choising", "최싱", "12345", Level.SILVER, 55, 10);
+        user3 = new User("forever", "포에버", "123456", Level.GOLD, 100 ,40);
+    }
+
+    private void checkSameUser(User user1, User user2) {
+        assertEquals(user1.getId(), user2.getId());
+        assertEquals(user1.getName(), user2.getName());
+        assertEquals(user1.getPassword(), user2.getPassword());
+        assertEquals(user1.getLevel(), user2.getLevel());
+        assertEquals(user1.getLogin(), user2.getLogin());
+        assertEquals(user1.getRecommend(), user2.getRecommend());
     }
 
     @Test
@@ -44,12 +53,10 @@ public class UserDaoTest {
         assertEquals(dao.getCount(), 2);
 
         User userGet1 = dao.get(user1.getId());
-        assertEquals(userGet1.getName(), user1.getName());
-        assertEquals(userGet1.getPassword(), user1.getPassword());
+        checkSameUser(user1, userGet1);
 
         User userGet2 = dao.get(user2.getId());
-        assertEquals(userGet2.getName(), user2.getName());
-        assertEquals(userGet2.getPassword(), user2.getPassword());
+        checkSameUser(user2, userGet2);
     }
 
     @Test

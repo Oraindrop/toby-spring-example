@@ -14,7 +14,6 @@ public class WebConfiguration {
     @Bean
     @ConfigurationProperties("spring.datasource.hikari")
     public DataSource dataSource() {
-
         return new HikariDataSource();
     }
 
