@@ -4,7 +4,6 @@ import io.github.oraindrop.Application;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_LOGIN_COUNT_FOR_SILVER;
+import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = Application.class)
@@ -29,10 +30,10 @@ class UserServiceTest {
     @BeforeEach
     public void setUp() {
         users = Arrays.asList(
-                new User("id1", "name1", "p1", Level.BASIC, 49, 0),
-                new User("id2", "name2", "p2", Level.BASIC, 50, 10),
-                new User("id3", "name3", "p3", Level.SILVER, 60 ,29),
-                new User("id4", "name4", "p4", Level.SILVER, 60 ,30),
+                new User("id1", "name1", "p1", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
+                new User("id2", "name2", "p2", Level.BASIC, MIN_LOGIN_COUNT_FOR_SILVER, 10),
+                new User("id3", "name3", "p3", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD - 1),
+                new User("id4", "name4", "p4", Level.SILVER, 60 ,MIN_RECOMMEND_FOR_GOLD),
                 new User("id5", "name5", "p5", Level.GOLD, 100 ,100)
         );
     }
@@ -47,11 +48,11 @@ class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevel(users.get(0), Level.BASIC);
-        checkLevel(users.get(1), Level.SILVER);
-        checkLevel(users.get(2), Level.SILVER);
-        checkLevel(users.get(3), Level.GOLD);
-        checkLevel(users.get(4), Level.GOLD);
+        checkLevel(users.get(0), false);
+        checkLevel(users.get(1), true);
+        checkLevel(users.get(2), false);
+        checkLevel(users.get(3), true);
+        checkLevel(users.get(4), false);
     }
 
     @Test
@@ -72,8 +73,14 @@ class UserServiceTest {
         assertEquals(userWithoutLevelRead.getLevel(), Level.BASIC);
     }
 
-    private void checkLevel(User user, Level expectedLevel) {
+    private void checkLevel(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
-        assertEquals(userUpdate.getLevel(), expectedLevel);
+
+        if (upgraded) {
+            assertEquals(userUpdate.getLevel(), user.getLevel().nextLevel());
+        } else {
+            assertEquals(userUpdate.getLevel(), user.getLevel());
+        }
+
     }
 }

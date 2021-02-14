@@ -10,26 +10,19 @@ public class UserService {
 
     private UserDao userDao;
 
-    public UserService(UserDao userDao) {
+    private UserLevelUpgradePolicy userLevelUpgradePolicy;
+
+    public UserService(UserDao userDao, UserLevelUpgradePolicy userLevelUpgradePolicy) {
         this.userDao = userDao;
+        this.userLevelUpgradePolicy = userLevelUpgradePolicy;
     }
 
     public void upgradeLevels() {
         List<User> users = userDao.getAll();
 
         for (User user : users) {
-            boolean changed = false;
-
-            if (user.getLevel() == Level.BASIC && user.getLogin() >= 50) {
-                user.setLevel(Level.SILVER);
-                changed = true;
-            } else if (user.getLevel() == Level.SILVER && user.getRecommend() >= 30) {
-                user.setLevel(Level.GOLD);
-                changed = true;
-            }
-
-            if (changed) {
-                userDao.update(user);
+            if (userLevelUpgradePolicy.canUpgradeLevel(user)) {
+                userLevelUpgradePolicy.upgradeLevel(user);
             }
         }
     }

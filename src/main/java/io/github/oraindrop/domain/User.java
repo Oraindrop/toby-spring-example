@@ -40,6 +40,15 @@ public class User {
     @Column(name = "recommend", nullable = false)
     private int recommend;
 
+    public void upgradeLevel() {
+        Level nextLevel = this.level.nextLevel();
+        if (nextLevel == null) {
+            throw new IllegalStateException(this.level + " is cannot upgrade.");
+        }
+
+        this.level = nextLevel;
+    }
+
     public String getId() {
         return id;
     }

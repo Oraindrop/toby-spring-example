@@ -1,6 +1,8 @@
 package io.github.oraindrop.dao;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.oraindrop.service.UserLevelUpgradePolicy;
+import io.github.oraindrop.service.UserLevelUpgradePolicyDefault;
 import io.github.oraindrop.service.UserService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +25,14 @@ public class WebConfiguration {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserService(this.userDao());
+    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
+        return new UserLevelUpgradePolicyDefault(this.userDao());
     }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(this.userDao(), this.userLevelUpgradePolicy());
+    }
+
 
 }

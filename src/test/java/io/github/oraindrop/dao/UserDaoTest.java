@@ -10,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,7 +42,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void addAndGet() throws SQLException, ClassNotFoundException {
+    public void addAndGet() {
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
@@ -60,7 +58,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void count() throws SQLException, ClassNotFoundException {
+    public void count() {
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
@@ -75,7 +73,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void getUserFailure() throws SQLException, ClassNotFoundException {
+    public void getUserFailure() {
         dao.deleteAll();
         assertEquals(dao.getCount(), 0);
 
