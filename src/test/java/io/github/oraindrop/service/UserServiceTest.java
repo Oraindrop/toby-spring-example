@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_LOGIN_COUNT_FOR_SILVER;
 import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = Application.class)
 class UserServiceTest {
@@ -42,19 +44,17 @@ class UserServiceTest {
 
     @Test
     public void upgradeLevels() {
-        userDao.deleteAll();
+        UserDao mockUserDao = mock(UserDao.class);
+        when(mockUserDao.getAll()).thenReturn(this.users);
 
-        for (User user : users) {
-            userDao.add(user);
-        }
+        UserServiceImpl userServiceImpl = new UserServiceImpl(mockUserDao, new UserLevelUpgradePolicyDefault(mockUserDao));
+        userServiceImpl.upgradeLevels();
 
-        userService.upgradeLevels();
-
-        checkLevel(users.get(0), false);
-        checkLevel(users.get(1), true);
-        checkLevel(users.get(2), false);
-        checkLevel(users.get(3), true);
-        checkLevel(users.get(4), false);
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao).update(users.get(1));
+        assertEquals(users.get(1).getLevel(), Level.SILVER);
+        verify(mockUserDao).update(users.get(3));
+        assertEquals(users.get(3).getLevel(), Level.GOLD);
     }
 
     @Test
@@ -75,7 +75,7 @@ class UserServiceTest {
         assertEquals(userWithoutLevelRead.getLevel(), Level.BASIC);
     }
 
-    private void checkLevel(User user, boolean upgraded) {
+    private void checkLevelUpgraded(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
 
         if (upgraded) {
@@ -101,7 +101,7 @@ class UserServiceTest {
             userServiceTx.upgradeLevels();
         });
 
-        checkLevel(users.get(1), false);
+        checkLevelUpgraded(users.get(1), false);
     }
 
     static class UserLevelUpgradePolicyTest extends UserLevelUpgradePolicyDefault {
@@ -126,4 +126,5 @@ class UserServiceTest {
     static class TestUserServiceException extends RuntimeException {
 
     }
+
 }
