@@ -33,7 +33,7 @@ public class ReflectionTest {
 
         Hello proxiedHello = (Hello) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {
                 Hello.class
-        }, new UpercaseHandler(new HelloTarget()));
+        }, new UppercaseHandler(new HelloTarget()));
 
         assertEquals(proxiedHello.sayHello("Toby"), "HELLO TOBY");
         assertEquals(proxiedHello.sayHi("Toby"), "HI TOBY");

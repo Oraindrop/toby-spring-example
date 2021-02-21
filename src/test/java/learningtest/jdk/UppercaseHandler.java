@@ -3,11 +3,11 @@ package learningtest.jdk;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class UpercaseHandler implements InvocationHandler {
+public class UppercaseHandler implements InvocationHandler {
 
     Object target;
 
-    public UpercaseHandler(Object target) {
+    public UppercaseHandler(Object target) {
         this.target = target;
     }
 
