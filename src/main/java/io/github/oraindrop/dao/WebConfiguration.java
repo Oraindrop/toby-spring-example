@@ -1,9 +1,7 @@
 package io.github.oraindrop.dao;
 
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.oraindrop.service.UserLevelUpgradePolicy;
-import io.github.oraindrop.service.UserLevelUpgradePolicyDefault;
-import io.github.oraindrop.service.UserService;
+import io.github.oraindrop.service.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +29,13 @@ public class WebConfiguration {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserService(this.userDao(), this.userLevelUpgradePolicy(), new DataSourceTransactionManager(this.dataSource()));
+    public UserService userServiceImpl() {
+        return new UserServiceImpl(this.userDao(), this.userLevelUpgradePolicy());
     }
 
+    @Bean
+    public UserService userService() {
+        return new UserServiceTx(this.userServiceImpl(), new DataSourceTransactionManager(this.dataSource()));
+    }
 
 }

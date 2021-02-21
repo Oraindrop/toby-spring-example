@@ -88,14 +88,17 @@ class UserServiceTest {
     @Test
     @DirtiesContext
     public void upgradeAllOrNothing() {
-        userService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyTest(userDao, users.get(3).getId()));
+        UserServiceImpl userServiceImpl = new UserServiceImpl(userDao, new UserLevelUpgradePolicyTest(userDao, users.get(3).getId()));
+        UserServiceTx userServiceTx = (UserServiceTx) this.userService;
+        userServiceTx.setUserService(userServiceImpl);
+
         userDao.deleteAll();
 
         for (User user : users) {
             userDao.add(user);
         }
         Assertions.assertThrows(TestUserServiceException.class, () -> {
-            userService.upgradeLevels();
+            userServiceTx.upgradeLevels();
         });
 
         checkLevel(users.get(1), false);
