@@ -34,8 +34,13 @@ public class WebConfiguration {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserServiceTx(this.userServiceImpl(), new DataSourceTransactionManager(this.dataSource()));
+    public TxProxyFactoryBean txProxyFactoryBean() {
+        return new TxProxyFactoryBean(this.userServiceImpl(), new DataSourceTransactionManager(this.dataSource()), "upgradeLevels", UserService.class);
     }
+    @Bean
+    public UserService userService() throws Exception {
+        return (UserService) txProxyFactoryBean().getObject();
+    }
+
 
 }

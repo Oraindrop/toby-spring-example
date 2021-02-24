@@ -4,18 +4,13 @@ import io.github.oraindrop.Application;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
-import io.github.oraindrop.proxy.TransactionHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +29,7 @@ class UserServiceTest {
     private UserDao userDao;
 
     @Autowired
-    DataSource dataSource;
+    private TxProxyFactoryBean txProxyFactoryBean;
 
     private List<User> users;
 
@@ -94,11 +89,9 @@ class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() {
-        UserService target = new UserServiceImpl(userDao, new UserLevelUpgradePolicyTest(userDao, users.get(3).getId()));
-        TransactionHandler txHandler = new TransactionHandler(target, new DataSourceTransactionManager(dataSource), "upgradeLevels");
-        UserService txUserService = (UserService) Proxy.newProxyInstance(getClass().getClassLoader()
-                , new Class[] {UserService.class}, txHandler);
+    public void upgradeAllOrNothing() throws Exception {
+        txProxyFactoryBean.setTarget(new UserServiceImpl(userDao, new UserLevelUpgradePolicyTest(userDao, users.get(3).getId())));
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
 
