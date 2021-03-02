@@ -7,8 +7,10 @@ import io.github.oraindrop.domain.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
@@ -29,7 +31,10 @@ class UserServiceTest {
     private UserDao userDao;
 
     @Autowired
-    private TxProxyFactoryBean txProxyFactoryBean;
+    private ProxyFactoryBean proxyFactoryBean;
+
+    @Autowired
+    private UserService userServiceImpl;
 
     private List<User> users;
 
@@ -89,16 +94,17 @@ class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() throws Exception {
-        txProxyFactoryBean.setTarget(new UserServiceImpl(userDao, new UserLevelUpgradePolicyTest(userDao, users.get(3).getId())));
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
+    public void upgradeAllOrNothing() {
+        UserServiceImpl testUserService = (UserServiceImpl) userServiceImpl;
+        testUserService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyTest(this.userDao, users.get(3).getId()));
 
+        proxyFactoryBean.setTarget(testUserService);
         userDao.deleteAll();
 
         for (User user : users) {
             userDao.add(user);
         }
-        Assertions.assertThrows(TestUserServiceException.class, txUserService::upgradeLevels);
+        Assertions.assertThrows(TestUserServiceException.class, userService::upgradeLevels);
 
         checkLevelUpgraded(users.get(1), false);
     }

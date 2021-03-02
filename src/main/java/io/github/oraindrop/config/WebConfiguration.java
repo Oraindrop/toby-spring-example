@@ -1,7 +1,13 @@
-package io.github.oraindrop.dao;
+package io.github.oraindrop.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.oraindrop.advice.TransactionAdvice;
+import io.github.oraindrop.dao.UserDao;
+import io.github.oraindrop.dao.UserJdbcDao;
 import io.github.oraindrop.service.*;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +40,20 @@ public class WebConfiguration {
     }
 
     @Bean
-    public TxProxyFactoryBean txProxyFactoryBean() {
-        return new TxProxyFactoryBean(this.userServiceImpl(), new DataSourceTransactionManager(this.dataSource()), "upgradeLevels", UserService.class);
-    }
-    @Bean
-    public UserService userService() throws Exception {
-        return (UserService) txProxyFactoryBean().getObject();
+    public ProxyFactoryBean proxyFactoryBean() {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(this.userServiceImpl());
+
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("upgrade*");
+
+        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new TransactionAdvice(new DataSourceTransactionManager(this.dataSource()))));
+        return pfBean;
     }
 
+    @Bean
+    public UserService userService() {
+        return (UserService) this.proxyFactoryBean().getObject();
+    }
 
 }
