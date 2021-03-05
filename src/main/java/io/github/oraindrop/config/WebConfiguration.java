@@ -1,13 +1,15 @@
 package io.github.oraindrop.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.oraindrop.advice.NameMatchClassMethodPointcut;
 import io.github.oraindrop.advice.TransactionAdvice;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.dao.UserJdbcDao;
 import io.github.oraindrop.service.*;
-import org.springframework.aop.framework.ProxyFactoryBean;
+import io.github.oraindrop.service.test.TestUserLevelUpgradePolicy;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,25 +37,31 @@ public class WebConfiguration {
     }
 
     @Bean
-    public UserService userServiceImpl() {
+    public UserService userService() {
         return new UserServiceImpl(this.userDao(), this.userLevelUpgradePolicy());
     }
 
     @Bean
-    public ProxyFactoryBean proxyFactoryBean() {
-        ProxyFactoryBean pfBean = new ProxyFactoryBean();
-        pfBean.setTarget(this.userServiceImpl());
-
-        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
-        pointcut.setMappedName("upgrade*");
-
-        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new TransactionAdvice(new DataSourceTransactionManager(this.dataSource()))));
-        return pfBean;
+    public UserService testUserService() {
+        return new UserServiceImpl(this.userDao(), new TestUserLevelUpgradePolicy(this.userDao()));
     }
 
     @Bean
-    public UserService userService() {
-        return (UserService) this.proxyFactoryBean().getObject();
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
+    }
+
+    @Bean
+    public Pointcut nameMatchClassMethodPointcut() {
+        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+        pointcut.setMappedName("upgrade*");
+        pointcut.setMappedClassName("*ServiceImpl");
+        return pointcut;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor testTransactionAdvisor() {
+        return new DefaultPointcutAdvisor(this.nameMatchClassMethodPointcut(), new TransactionAdvice(new DataSourceTransactionManager(this.dataSource())));
     }
 
 }

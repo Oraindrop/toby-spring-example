@@ -1,17 +1,17 @@
 package io.github.oraindrop.service;
 
 import io.github.oraindrop.Application;
+import io.github.oraindrop.config.WebConfiguration;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
+import io.github.oraindrop.exception.TestUserServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,19 +22,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = Application.class)
+@Import(WebConfiguration.class)
 class UserServiceTest {
 
     @Autowired
     private UserService userService;
 
     @Autowired
+    private UserService testUserService;
+
+    @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private ProxyFactoryBean proxyFactoryBean;
-
-    @Autowired
-    private UserService userServiceImpl;
 
     private List<User> users;
 
@@ -93,43 +91,13 @@ class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeAllOrNothing() {
-        UserServiceImpl testUserService = (UserServiceImpl) userServiceImpl;
-        testUserService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyTest(this.userDao, users.get(3).getId()));
-
-        proxyFactoryBean.setTarget(testUserService);
-        userDao.deleteAll();
-
         for (User user : users) {
             userDao.add(user);
         }
-        Assertions.assertThrows(TestUserServiceException.class, userService::upgradeLevels);
 
+        Assertions.assertThrows(TestUserServiceException.class, testUserService::upgradeLevels);
         checkLevelUpgraded(users.get(1), false);
-    }
-
-    static class UserLevelUpgradePolicyTest extends UserLevelUpgradePolicyDefault {
-
-        private String id;
-
-        public UserLevelUpgradePolicyTest(UserDao userDao, String id) {
-            super(userDao);
-            this.id = id;
-        }
-
-        @Override
-        public void upgradeLevel(User user) {
-            if (user.getId().equals(this.id)) {
-                throw new TestUserServiceException();
-            }
-
-            super.upgradeLevel(user);
-        }
-    }
-
-    static class TestUserServiceException extends RuntimeException {
-
     }
 
 }
