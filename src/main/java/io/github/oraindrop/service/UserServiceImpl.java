@@ -61,4 +61,7 @@ public class UserServiceImpl implements UserService {
         userDao.update(user);
     }
 
+    public UserDao getUserDao() {
+        return userDao;
+    }
 }

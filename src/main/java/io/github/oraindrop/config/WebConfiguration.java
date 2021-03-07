@@ -29,6 +29,11 @@ public class WebConfiguration {
     }
 
     @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(this.dataSource());
+    }
+
+    @Bean
     public UserDao userDao() {
         return new UserJdbcDao(this.dataSource());
     }
@@ -46,30 +51,6 @@ public class WebConfiguration {
     @Bean
     public TestUserService testUserService() {
         return new TestUserService(this.userDao(), new TestUserLevelUpgradePolicy(this.userDao()));
-    }
-
-    @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-        return defaultAdvisorAutoProxyCreator;
-    }
-
-    @Bean
-    public Pointcut pointcut() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("bean(*Service)");
-        return pointcut;
-    }
-
-    @Bean
-    public DefaultPointcutAdvisor transactionAdvisor() {
-        Properties properties = new Properties();
-        properties.setProperty("get*", "PROPAGATION_REQUIRED,readOnly,timeout_30");
-        properties.setProperty("upgrade*", "PROPAGATION_REQUIRES_NEW,ISOLATION_SERIALIZABLE");
-        properties.setProperty("*", "PROPAGATION_REQUIRED");
-        TransactionInterceptor transactionInterceptor = new TransactionInterceptor(new DataSourceTransactionManager(this.dataSource()), properties);
-        return new DefaultPointcutAdvisor(this.pointcut(), transactionInterceptor);
     }
 
 }

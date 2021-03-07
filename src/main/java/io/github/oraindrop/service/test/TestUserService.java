@@ -4,6 +4,7 @@ import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.User;
 import io.github.oraindrop.service.UserLevelUpgradePolicy;
 import io.github.oraindrop.service.UserServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,10 +14,12 @@ public class TestUserService extends UserServiceImpl {
         super(userDao, userLevelUpgradePolicy);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<User> getAll() {
+        System.out.println(super.getAll());
         for (User user : super.getAll()) {
-            super.update(user);
+            super.getUserDao().update(user);
         }
         return null;
     }

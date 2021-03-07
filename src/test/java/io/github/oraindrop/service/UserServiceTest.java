@@ -11,6 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +32,9 @@ class UserServiceTest {
 
     @Autowired
     private TestUserService testUserService;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private UserDao userDao;
@@ -96,6 +103,20 @@ class UserServiceTest {
 
         Assertions.assertThrows(TestUserServiceException.class, testUserService::upgradeLevels);
         checkLevelUpgraded(users.get(1), false);
+    }
+
+    @Test
+    public void readOnlyTest() {
+        // H2 에서는 실패하는 것 같음.
+        testUserService.getAll();
+    }
+
+    @Test
+    @Transactional
+    public void transactionSync() {
+        userService.deleteAll();
+        userService.add(users.get(0));
+        userService.add(users.get(1));
     }
 
 }
