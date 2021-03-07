@@ -1,7 +1,6 @@
 package io.github.oraindrop.service;
 
 import io.github.oraindrop.Application;
-import io.github.oraindrop.config.WebConfiguration;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = Application.class)
-@Import(WebConfiguration.class)
 class UserServiceTest {
 
     @Autowired
