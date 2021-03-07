@@ -5,6 +5,7 @@ import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
 import io.github.oraindrop.exception.TestUserServiceException;
+import io.github.oraindrop.service.test.TestUserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Autowired
-    private UserService testUserService;
+    private TestUserService testUserService;
 
     @Autowired
     private UserDao userDao;
