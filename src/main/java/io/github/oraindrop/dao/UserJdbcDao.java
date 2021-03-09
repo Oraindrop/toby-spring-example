@@ -2,6 +2,7 @@ package io.github.oraindrop.dao;
 
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
+import io.github.oraindrop.service.SqlService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -12,6 +13,8 @@ import java.util.List;
 public class UserJdbcDao implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
+
+    private SqlService sqlService;
 
     private RowMapper<User> userMapper = new RowMapper<User>() {
         @Override
@@ -28,42 +31,41 @@ public class UserJdbcDao implements UserDao {
         }
     };
 
-    public UserJdbcDao(DataSource dataSource) {
+    public UserJdbcDao(DataSource dataSource, SqlService sqlService) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.sqlService = sqlService;
     }
 
     @Override
     public void add(final User user) {
-        this.jdbcTemplate.update("insert into user (id, name, password, level, login, recommend, email) values (?,?,?,?,?,?,?)",
+        this.jdbcTemplate.update(sqlService.getSql("userAdd"),
                 user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail());
     }
 
     @Override
     public User get(String id) {
-        return this.jdbcTemplate.queryForObject("select * from user where id = ?", new Object[]{id}, this.userMapper);
+        return this.jdbcTemplate.queryForObject(sqlService.getSql("userGet"), new Object[]{id}, this.userMapper);
     }
 
     @Override
     public List<User> getAll() {
-        return this.jdbcTemplate.query("select * from user", this.userMapper);
+        return this.jdbcTemplate.query(sqlService.getSql("userGetAll"), this.userMapper);
     }
 
     @Override
     public void deleteAll() {
-        this.jdbcTemplate.update("delete from user");
+        this.jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
     }
 
     @Override
     public void update(User user) {
         this.jdbcTemplate.update(
-                "update user " +
-                        "set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ?" +
-                        "where id = ?",
+                sqlService.getSql("userUpdate"),
                 user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail(), user.getId());
     }
 
     @Override
     public int getCount() {
-        return this.jdbcTemplate.queryForObject("select count(*) from user", Integer.class);
+        return this.jdbcTemplate.queryForObject(sqlService.getSql("userGetCount"), Integer.class);
     }
 }
