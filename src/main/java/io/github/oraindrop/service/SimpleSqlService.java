@@ -2,6 +2,7 @@ package io.github.oraindrop.service;
 
 import io.github.oraindrop.exception.SqlRetrievalFailureException;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,15 +11,19 @@ public class SimpleSqlService implements SqlService {
     private Map<String, String> map;
 
     public SimpleSqlService() {
-        map = new HashMap<>();
-        map.put("userAdd", "insert into user (id, name, password, level, login, recommend, email) values (?,?,?,?,?,?,?)");
-        map.put("userGet", "select * from user where id = ?");
-        map.put("userGetAll", "select * from user");
-        map.put("userDeleteAll", "delete from user");
-        map.put("userGetCount", "select count(*) from user");
-        map.put("userUpdate", "update user " +
-                "set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ?" +
-                "where id = ?");
+        this.map = new HashMap<>();
+    }
+
+    @PostConstruct
+    public void loadSql() {
+        this.map.put("userAdd", "insert into user (id, name, password, level, login, recommend, email) values (?,?,?,?,?,?,?)");
+        this.map.put("userGet", "select * from user where id = ?");
+        this.map.put("userGetAll", "select * from user");
+        this.map.put("userDeleteAll", "delete from user");
+        this.map.put("userGetCount", "select count(*) from user");
+        this.map.put("userUpdate", "update user "
+                + "set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ?"
+                + "where id = ?");
     }
 
     @Override

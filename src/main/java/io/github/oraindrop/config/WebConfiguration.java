@@ -34,8 +34,13 @@ public class WebConfiguration {
     }
 
     @Bean
+    public SqlService sqlService() {
+        return new SimpleSqlService();
+    }
+
+    @Bean
     public UserDao userDao() {
-        return new UserJdbcDao(this.dataSource(), new SimpleSqlService());
+        return new UserJdbcDao(this.dataSource(), this.sqlService());
     }
 
     @Bean
