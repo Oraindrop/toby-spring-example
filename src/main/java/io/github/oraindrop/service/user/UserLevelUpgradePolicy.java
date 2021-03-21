@@ -1,4 +1,4 @@
-package io.github.oraindrop.service;
+package io.github.oraindrop.service.user;
 
 import io.github.oraindrop.domain.User;
 

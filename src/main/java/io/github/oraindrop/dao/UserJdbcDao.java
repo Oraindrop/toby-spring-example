@@ -2,7 +2,7 @@ package io.github.oraindrop.dao;
 
 import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
-import io.github.oraindrop.service.SqlService;
+import io.github.oraindrop.service.sql.SqlService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 

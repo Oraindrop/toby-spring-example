@@ -6,6 +6,9 @@ import io.github.oraindrop.domain.Level;
 import io.github.oraindrop.domain.User;
 import io.github.oraindrop.exception.TestUserServiceException;
 import io.github.oraindrop.service.test.TestUserService;
+import io.github.oraindrop.service.user.UserLevelUpgradePolicyDefault;
+import io.github.oraindrop.service.user.UserService;
+import io.github.oraindrop.service.user.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_LOGIN_COUNT_FOR_SILVER;
-import static io.github.oraindrop.service.UserLevelUpgradePolicyDefault.MIN_RECOMMEND_FOR_GOLD;
+import static io.github.oraindrop.service.user.UserLevelUpgradePolicyDefault.MIN_LOGIN_COUNT_FOR_SILVER;
+import static io.github.oraindrop.service.user.UserLevelUpgradePolicyDefault.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

@@ -2,8 +2,8 @@ package io.github.oraindrop.service.test;
 
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.User;
-import io.github.oraindrop.service.UserLevelUpgradePolicy;
-import io.github.oraindrop.service.UserServiceImpl;
+import io.github.oraindrop.service.user.UserLevelUpgradePolicy;
+import io.github.oraindrop.service.user.UserServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

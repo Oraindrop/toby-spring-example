@@ -3,7 +3,7 @@ package io.github.oraindrop.service.test;
 import io.github.oraindrop.dao.UserDao;
 import io.github.oraindrop.domain.User;
 import io.github.oraindrop.exception.TestUserServiceException;
-import io.github.oraindrop.service.UserLevelUpgradePolicyDefault;
+import io.github.oraindrop.service.user.UserLevelUpgradePolicyDefault;
 
 public class TestUserLevelUpgradePolicy extends UserLevelUpgradePolicyDefault {
 
