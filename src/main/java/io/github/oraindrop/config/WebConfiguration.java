@@ -33,7 +33,7 @@ public class WebConfiguration {
 
     @Bean
     public SqlService sqlService() {
-        return new SimpleSqlService(new StringSqlReader(), new HashMapSqlRegistry());
+        return new SimpleSqlService(new StringSqlReader(), new ConcurrentHashMapSqlRegistry());
     }
 
     @Bean
